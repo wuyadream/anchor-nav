@@ -45,6 +45,10 @@
             text-align: left;
         }
 
+        .right-nav p {
+            color:#333;
+        }
+
         .right-nav ul {
             padding-left: 0;
         }
@@ -97,7 +101,7 @@
     <p>肖申克的救赎</p>
 </div>
 <div class="right-nav">
-    <p style="color:#333">导航</p>
+    <p>导航</p>
     <div id="nav"></div>
 </div>
 
@@ -110,7 +114,6 @@
         /* 1、创建右侧导航栏*/
         var html = ['<ul>'];
         var h2 = document.querySelectorAll('#article h2');
-        // console.log(h2);
         for(var i = 0; i < h2.length; i++) {
             var id = 'd' + i;
             var el = h2[i];
@@ -133,13 +136,11 @@
                 if(element.tagName.toLowerCase() == 'h4') {
                     element.id = 'd' + i + h4_num;
                     html.push('<li><a href="#' + element.id + '" id="a' + i + '' + i + ''+ h4_num + '' + h4_num + '" class="level2_a">' + (i+1) + '.' + (h4_num+1)+ ' '+element.innerText + '</a></li>');
-                    // console.log('<li><a href="#' + element.id + '" id="d' + i + '' + i + ''+ h4_num + '' + h4_num + '" class="level2_a">' + (i+1) + '.' + (h4_num+1)+ ' '+element.innerText + '</a></li>');
                     h4_num = h4_num + 1;
                 }
             }
             h4_length.push(h4_num);
         }
-        // console.log(h4_length);
         html.push('</ul>');
         var nav = document.getElementById('nav');
         nav.innerHTML = html.join('\n');
@@ -183,7 +184,5 @@
     });
 
 </script>
-
-
 </body>
 </html>
