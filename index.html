@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>anchor-nav</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .content {
+            width:800px;
+            margin: 0 auto;
+            margin-top: 100px;
+        }
+        .content h2 {
+            font-size: 18px;
+            color:rgba(0,0,0,.87);
+            height: 600px;
+            line-height: 600px;
+            background-color: deepskyblue;
+        }
+        .content h4 {
+            font-size: 16px;
+            color:rgba(0,0,0,.87);
+            background-color: lightskyblue;
+            height: 400px;
+            line-height: 400px;
+
+        }
+        .content p{
+            font-size: 12px;
+            color:#666;
+            height: 400px;
+            line-height: 400px;
+            background-color: skyblue;
+        }
+        .right-nav {
+            position: fixed;
+            right:20px;
+            top:200px;
+            width: 200px;
+            text-align: left;
+        }
+
+        .right-nav ul {
+            padding-left: 0;
+        }
+
+        .right-nav li{
+            list-style: none;
+
+        }
+        .right-nav a {
+            color:#999;
+            padding-left:6px ;
+            border-left: 2px solid #999;
+            display: inline-block;
+            margin-bottom: 4px;
+            text-decoration: none;
+        }
+
+        .right-nav .level2_a {
+            color:#999;
+            padding-left:20px ;
+            border-left: 2px solid #999;
+        }
+
+        .right-nav a:hover{
+            color:#2277da;
+        }
+
+        .right-nav .c{
+            border-left: 2px solid #2277da;
+            color:#2277da;
+        }
+
+    </style>
+</head>
+<body>
+<h1>anchor-nav</h1>
+<div class="content" id="article">
+    <h2>美食</h2>
+    <h4>鱼香肉丝</h4>
+    <h4>油焖小龙虾</h4>
+    <p>酸菜鱼</p>
+    <h2>人文</h2>
+    <h4>蜀绣</h4>
+    <p>陶瓷</p>
+    <h4>丝绸</h4>
+    <p>油画</p>
+    <h2>影视</h2>
+    <h4>风雨哈佛路</h4>
+    <h4>泰坦尼克号</h4>
+    <p>肖申克的救赎</p>
+</div>
+<div class="right-nav">
+    <p style="color:#333">导航</p>
+    <div id="nav"></div>
+</div>
+
+<script type="text/javascript" src="jquery-1.11.3.min.js"></script>
+<script>
+
+    var h4_length = [];
+    window.onload = function () {
+
+        /* 1、创建右侧导航栏*/
+        var html = ['<ul>'];
+        var h2 = document.querySelectorAll('#article h2');
+        // console.log(h2);
+        for(var i = 0; i < h2.length; i++) {
+            var id = 'd' + i;
+            var el = h2[i];
+            el.id = id;
+            var h4_num = 0; //记录该一级菜单下的二级菜单的个数
+
+            // 1.1 生成一级目录
+            html.push('<li><a href="#'+ id + '" id="'+ 'a' + i + i +'">' + (i + 1) + '.' + el.innerHTML + '</a></li>');
+
+            // 1.2 生成二级目录
+            /* 生成二级目录需要从两个h2标签中找到所有的h4标签*/
+            var parent = h2[i].parentElement;
+            var element = h2[i];
+            while(1) {
+                if( (element == parent.lastElementChild) || (element == h2[i+1])) {
+                    break; //搜索结束
+                }
+                element = element.nextElementSibling;
+                // console.log(element.tagName.toLowerCase());
+                if(element.tagName.toLowerCase() == 'h4') {
+                    element.id = 'd' + i + h4_num;
+                    html.push('<li><a href="#' + element.id + '" id="a' + i + '' + i + ''+ h4_num + '' + h4_num + '" class="level2_a">' + (i+1) + '.' + (h4_num+1)+ ' '+element.innerText + '</a></li>');
+                    // console.log('<li><a href="#' + element.id + '" id="d' + i + '' + i + ''+ h4_num + '' + h4_num + '" class="level2_a">' + (i+1) + '.' + (h4_num+1)+ ' '+element.innerText + '</a></li>');
+                    h4_num = h4_num + 1;
+                }
+            }
+            h4_length.push(h4_num);
+        }
+        // console.log(h4_length);
+        html.push('</ul>');
+        var nav = document.getElementById('nav');
+        nav.innerHTML = html.join('\n');
+
+        /* 2、点击时激活右侧导航*/
+        $('#nav a').click(function(e){
+            setTimeout(function(){
+                $('#nav a').removeClass("c");
+                if( e.target.getAttribute("class") == null) {
+                    e.target.setAttribute("class", "c");
+                 } else {
+                   e.target.setAttribute("class", e.target.getAttribute("class")+ ' '+"c");
+                }
+            },0);
+        });
+
+    }
+
+    /* 3、滚动时激活右侧导航 */
+    $(function(){
+        $(window).scroll(function(){
+            var wst = $(window).scrollTop(); //滚动条距离顶部距离页面顶端的值
+            var h2 = document.querySelectorAll('#article h2');
+            for(var i=0; i<h2.length; i++){
+                if($("#d"+i).offset().top <= wst){
+                    $('#nav a').removeClass("c");
+
+                    if( !$('#a'+i+i).hasClass("c")) {
+                        $('#a'+i+i).addClass("c");
+                    }
+                }
+                for(var j = 0; j < h4_length[i]; j++){
+                    if($("#d"+i+j).offset().top <= wst){
+                        $('#nav a').removeClass("c");
+                        $('#a'+i+i+j+j).addClass("c");
+                    }
+                }
+            }
+        });
+
+    });
+
+</script>
+
+
+</body>
+</html>
